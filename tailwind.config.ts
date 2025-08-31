@@ -52,6 +52,22 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				alert: {
+					high: 'hsl(var(--alert-high))',
+					medium: 'hsl(var(--alert-medium))',
+					low: 'hsl(var(--alert-low))'
+				},
+				health: {
+					primary: 'hsl(var(--health-primary))',
+					secondary: 'hsl(var(--health-secondary))'
+				},
+				success: 'hsl(var(--success))',
+				map: {
+					low: 'hsl(var(--map-low))',
+					medium: 'hsl(var(--map-medium))',
+					high: 'hsl(var(--map-high))',
+					critical: 'hsl(var(--map-critical))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
