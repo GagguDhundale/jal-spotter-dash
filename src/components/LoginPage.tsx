@@ -3,7 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Droplets } from 'lucide-react';
+import { Shield, Droplets, User, Lock, AlertCircle, Globe } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { translations } from '../data/translations';
+import { useToast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface LoginPageProps {
   onLogin: () => void;
@@ -12,12 +16,38 @@ interface LoginPageProps {
 export function LoginPage({ onLogin }: LoginPageProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  const { login, language, setLanguage } = useAuth();
+  const { toast } = useToast();
+  const t = translations[language];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simple validation for demo
-    if (username && password) {
-      onLogin();
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      const success = await login(username, password);
+      if (success) {
+        toast({
+          title: "Login Successful",
+          description: "Welcome to Jalrakshak Dashboard",
+        });
+        onLogin();
+      } else {
+        setError(t.loginError);
+        toast({
+          title: "Login Failed",
+          description: t.loginError,
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      setError(t.loginError);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -35,51 +65,98 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           <p className="text-muted-foreground">Water-Borne Disease Early Warning System</p>
         </div>
 
-        <Card className="border-2">
+        <Card className="border-2 animate-scale-in">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Health Official Login</CardTitle>
-            <CardDescription>
-              Access the district health monitoring dashboard
-            </CardDescription>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex-1" />
+              <div>
+                <CardTitle className="text-2xl">{t.loginTitle}</CardTitle>
+                <CardDescription>
+                  Access the district health monitoring dashboard
+                </CardDescription>
+              </div>
+              <div className="flex-1 flex justify-end">
+                <Select value={language} onValueChange={setLanguage}>
+                  <SelectTrigger className="w-20">
+                    <Globe className="w-4 h-4" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="en">EN</SelectItem>
+                    <SelectItem value="as">অস</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20 animate-fade-in">
+                  <AlertCircle className="w-4 h-4" />
+                  {error}
+                </div>
+              )}
+              
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username" className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  {t.username}
+                </Label>
                 <Input
                   id="username"
                   type="text"
-                  placeholder="Enter your username"
+                  placeholder={t.username}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  disabled={isLoading}
                   required
                 />
               </div>
+              
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="flex items-center gap-2">
+                  <Lock className="w-4 h-4" />
+                  {t.password}
+                </Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder={t.password}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
                   required
                 />
               </div>
+              
               <Button 
                 type="submit" 
-                className="w-full bg-health-primary hover:bg-health-primary/90"
+                className="w-full bg-health-primary hover:bg-health-primary/90 hover-scale"
                 size="lg"
+                disabled={isLoading}
               >
                 <Shield className="w-4 h-4 mr-2" />
-                Login as Health Official
+                {isLoading ? 'Logging in...' : t.loginButton}
               </Button>
+              
+              <div className="text-center">
+                <button 
+                  type="button" 
+                  className="text-sm text-health-primary hover:underline story-link"
+                >
+                  {t.forgotPassword}
+                </button>
+              </div>
             </form>
             
             <div className="mt-6 p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground text-center">
-                Demo Credentials: Any username/password combination
-              </p>
+              <h4 className="font-medium text-sm mb-2">Demo Accounts:</h4>
+              <div className="space-y-1 text-xs text-muted-foreground">
+                <p><strong>dr.sharma</strong> / health123 - District Medical Officer</p>
+                <p><strong>coordinator.devi</strong> / asha456 - ASHA Coordinator</p>
+                <p><strong>inspector.das</strong> / inspect789 - Health Inspector</p>
+                <p><strong>analyst.goswami</strong> / data123 - Data Analyst</p>
+              </div>
             </div>
           </CardContent>
         </Card>

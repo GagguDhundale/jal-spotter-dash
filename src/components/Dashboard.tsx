@@ -4,7 +4,12 @@ import { StatsCards } from './StatsCards';
 import { InteractiveMap } from './InteractiveMap';
 import { AlertPanel } from './AlertPanel';
 import { DataVisualization } from './DataVisualization';
+import { ResourceMonitor } from './AdvancedComponents/ResourceMonitor';
+import { ActionHistory } from './AdvancedComponents/ActionHistory';
+import { AIPathogenAssistant } from './AdvancedComponents/AIPathogenAssistant';
+import { ExportTools } from './AdvancedComponents/ExportTools';
 import { sampleReports, sampleWaterSources, sampleAlerts, dashboardStats, chartData } from '../data/sampleData';
+import { useAuth } from '../contexts/AuthContext';
 
 interface DashboardProps {
   onLogout: () => void;
@@ -12,6 +17,8 @@ interface DashboardProps {
 
 export function Dashboard({ onLogout }: DashboardProps) {
   const [dateRange, setDateRange] = useState('7days');
+  const [selectedAlertId, setSelectedAlertId] = useState<string>();
+  const { user, language } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -26,7 +33,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
         <StatsCards stats={dashboardStats} />
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
           {/* Map and Visualization - Takes 2 columns */}
           <div className="xl:col-span-2 space-y-6">
             <InteractiveMap 
@@ -36,11 +43,21 @@ export function Dashboard({ onLogout }: DashboardProps) {
             <DataVisualization data={chartData} />
           </div>
 
-          {/* Alert Panel - Takes 1 column */}
-          <div className="xl:col-span-1">
-            <AlertPanel alerts={sampleAlerts} />
+          {/* Alert and AI Panel - Takes 1 column */}
+          <div className="xl:col-span-1 space-y-6">
+            <AlertPanel alerts={sampleAlerts} onAlertSelect={setSelectedAlertId} />
+            <AIPathogenAssistant selectedAlertId={selectedAlertId} />
+          </div>
+
+          {/* Resources and Tools - Takes 1 column */}
+          <div className="xl:col-span-1 space-y-6">
+            <ResourceMonitor />
+            <ExportTools />
           </div>
         </div>
+
+        {/* Action History */}
+        <ActionHistory />
 
         {/* Footer */}
         <footer className="text-center text-sm text-muted-foreground py-4 border-t">

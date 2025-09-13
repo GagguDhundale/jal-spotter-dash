@@ -6,9 +6,10 @@ import { Alert } from '../types/dashboard';
 
 interface AlertPanelProps {
   alerts: Alert[];
+  onAlertSelect?: (alertId: string) => void;
 }
 
-export function AlertPanel({ alerts }: AlertPanelProps) {
+export function AlertPanel({ alerts, onAlertSelect }: AlertPanelProps) {
   const getAlertIcon = (level: string) => {
     return <AlertTriangle className={`w-4 h-4 ${
       level === 'high' ? 'text-alert-high' :
