@@ -47,9 +47,10 @@ export interface User {
   id: string;
   username: string;
   fullName: string;
-  role: 'district_medical_officer' | 'asha_coordinator' | 'health_inspector' | 'data_analyst';
+  role: 'district_medical_officer' | 'asha_coordinator' | 'health_inspector' | 'data_analyst' | 'public_user';
   district: string;
   department: string;
+  phone?: string;
   lastLogin: Date;
   profilePicture?: string;
 }

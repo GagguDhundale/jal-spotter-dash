@@ -5,6 +5,7 @@ interface AuthContextType {
   user: User | null;
   language: 'en' | 'as';
   login: (username: string, password: string) => Promise<boolean>;
+  loginPublicUser: (phone: string, otp: string) => Promise<boolean>;
   logout: () => void;
   setLanguage: (lang: 'en' | 'as') => void;
 }
@@ -93,6 +94,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return false;
   };
 
+  const loginPublicUser = async (phone: string, otp: string): Promise<boolean> => {
+    // Mock public user login - in real app, verify OTP with backend
+    if (otp === '123456' || otp === '1234') {
+      const publicUser: User = {
+        id: 'public_' + Date.now(),
+        username: phone,
+        fullName: 'Community User',
+        role: 'public_user',
+        district: 'Dibrugarh',
+        department: 'Public',
+        phone: phone,
+        lastLogin: new Date(),
+      };
+      setUser(publicUser);
+      localStorage.setItem('jalrakshak_user', JSON.stringify(publicUser));
+      return true;
+    }
+    
+    return false;
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('jalrakshak_user');
@@ -107,7 +129,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider value={{ 
       user, 
       language, 
-      login, 
+      login,
+      loginPublicUser, 
       logout, 
       setLanguage: handleSetLanguage 
     }}>

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Droplets, User, Lock, AlertCircle, Globe } from 'lucide-react';
+import { Shield, Droplets, User, Lock, AlertCircle, Globe, ArrowLeft, Building } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { translations } from '../data/translations';
 import { useToast } from '@/hooks/use-toast';
@@ -11,9 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 interface LoginPageProps {
   onLogin: () => void;
+  onBack: () => void;
 }
 
-export function LoginPage({ onLogin }: LoginPageProps) {
+export function LoginPage({ onLogin, onBack }: LoginPageProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -55,14 +56,23 @@ export function LoginPage({ onLogin }: LoginPageProps) {
     <div className="min-h-screen bg-gradient-to-br from-health-primary/10 via-background to-health-secondary/10 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
+          <Button 
+            variant="ghost" 
+            onClick={onBack}
+            className="absolute top-4 left-4 gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </Button>
+          
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="relative">
               <Droplets className="w-10 h-10 text-health-primary" />
-              <Shield className="w-6 h-6 text-health-secondary absolute -top-1 -right-1" />
+              <Building className="w-6 h-6 text-health-secondary absolute -top-1 -right-1" />
             </div>
             <h1 className="text-3xl font-bold text-foreground">Jalrakshak</h1>
           </div>
-          <p className="text-muted-foreground">Water-Borne Disease Early Warning System</p>
+          <p className="text-muted-foreground">Government Health Portal</p>
         </div>
 
         <Card className="border-2 animate-scale-in">
@@ -70,9 +80,9 @@ export function LoginPage({ onLogin }: LoginPageProps) {
             <div className="flex items-center justify-between mb-4">
               <div className="flex-1" />
               <div>
-                <CardTitle className="text-2xl">{t.loginTitle}</CardTitle>
+                <CardTitle className="text-2xl">Government Access</CardTitle>
                 <CardDescription>
-                  Access the district health monitoring dashboard
+                  Professional dashboard for health officials
                 </CardDescription>
               </div>
               <div className="flex-1 flex justify-end">
